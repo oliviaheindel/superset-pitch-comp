@@ -7,6 +7,7 @@ import ClickSpark from '../rb/ClickSpark.jsx';
 import { battery, cap, collectDevice, postSignup, useStats } from '../shared.js';
 import { BUCKETS, BUYERS, MONTHS, PREMIUM_PRICE, PRICE, simulateYear } from '../model.js';
 import Wordmark from '../Wordmark.jsx';
+import logo from './logo.png';
 import './site.css';
 
 const DEMO = import.meta.env.MODE === 'single'; // the preview build has no backend
@@ -59,6 +60,7 @@ function Hero() {
       <div className="hero-dots" aria-hidden="true">
         <DotGrid dotSize={5} gap={22} baseColor="#d8ddf7" activeColor="#e4002b" proximity={130} shockRadius={220} shockStrength={4} resistance={700} returnDuration={1.4} />
       </div>
+      <img className="hero-logo" src={logo} alt="sell.yoursellf logo: a person inside a barcode, crossed by a red scan line" />
       <div className="hero-in">
         <p className="eyebrow">Membership by application only</p>
         <h1 className="hero-h">
