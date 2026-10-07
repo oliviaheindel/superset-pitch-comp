@@ -60,7 +60,7 @@ function What({ beat }) {
 /* ---------- 3. pricing + application ---------- */
 function Pricing({ beat, active }) {
   const year = simulateYear(0.4, 7).slice(0, 8);
-  const top = Math.max(60, ...year);
+  const top = Math.max(150, ...year);
   const loop = ['Apply', 'Get accepted', `Pay $${PRICE}/mo to stay on`, 'Stop paying → reapply'];
   return (
     <div className="pad pricing">
@@ -80,7 +80,7 @@ function Pricing({ beat, active }) {
             {year.map((m, i) => <i key={i} className={m > PRICE ? 'win' : ''} style={{ '--h': `${(m / top) * 100}%`, '--i': i }} />)}
             <em>${PRICE}</em>
           </div>
-          <p className="pc-f">Sometimes you profit. Sometimes you don't. Red months beat the fee.</p>
+          <p className="pc-f">Profit $50–$500 every month, after the $20 fee.</p>
         </Show>
         <Show when={beat >= 2} className="pcard prem" d={100}>
           <p className="pc-n">Premium · Off the Market</p>

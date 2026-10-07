@@ -176,7 +176,7 @@ function Portfolio({ high, setHigh }) {
   const year = useMemo(() => simulateYear(high / 100, seed), [high, seed]);
   const wins = year.filter((v) => v > PRICE).length;
   const net = year.reduce((s, v) => s + v - PRICE, 0);
-  const top = Math.max(60, ...year);
+  const top = Math.max(150, ...year);
   return (
     <section className="pf" id="portfolio">
       <Reveal className="sec-head">
@@ -214,7 +214,7 @@ function Portfolio({ high, setHigh }) {
             ))}
             <em className="fee">${PRICE} fee</em>
           </div>
-          <p className="sim-wins">You profited <b>{wins} of 12</b> months.</p>
+          <p className="sim-wins">You profited <b>{wins} of 12</b> months, after the fee.</p>
           <p className="sim-net">Year: <span className={net < 0 ? 'neg' : 'pos'}><Num value={net} /></span></p>
           <button className="btn btn-white" onClick={() => setSeed((s) => s + 1)}>Simulate another year</button>
         </Reveal>
@@ -238,7 +238,7 @@ function Pricing() {
         <Reveal className="plan">
           <p className="plan-n">Member</p>
           <p className="plan-p">${PRICE}<small>/mo</small></p>
-          <ul><li>Your data portfolio, low + high risk</li><li>Monthly statement of who bought you</li><li>You keep 50% of every sale</li><li>Some months you profit. Some months you don't.</li></ul>
+          <ul><li>Your data portfolio, low + high risk</li><li>Monthly statement of who bought you</li><li>You keep 50% of every sale</li><li>Profit after the fee: $10–40/mo low risk, $50–500/mo high risk</li></ul>
         </Reveal>
         <Reveal className="plan prem" style={{ '--d': '140ms' }}>
           <p className="plan-n">Premium · Off the Market</p>
