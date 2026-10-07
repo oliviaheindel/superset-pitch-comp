@@ -94,7 +94,9 @@ function Drop() {
 }
 
 function Live() {
-  const { count, names, loaded } = useStats(5000);
+  const stats = useStats(5000);
+  const { names, loaded } = stats;
+  const count = 57572 + stats.count; // the waitlist before tonight, plus everyone who applies live
   return (
     <section className="live">
       <Reveal className="live-in">
