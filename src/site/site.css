@@ -241,7 +241,7 @@
 .chart { position: relative; height: 220px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; align-items: end; border-bottom: 2px solid #fff; padding-bottom: 20px; }
 .col { position: relative; height: 100%; display: flex; align-items: flex-end; }
 .col i { display: block; width: 100%; height: var(--h); background: #fff; transition: height .7s var(--ease); }
-.col.win i { background: var(--red); border: 2px solid #fff; }
+.col.win i { background: #16a34a; border: 2px solid #fff; }
 .col span { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; }
 .chart::after { content: ""; position: absolute; left: 0; right: 0; bottom: calc(20px + (100% - 20px) * var(--line-n)); height: 0; border-top: 2px dashed #fff; }
 .chart .fee { position: absolute; right: 0; bottom: calc(24px + (100% - 20px) * var(--line-n)); font-style: normal; font-size: 11px; font-weight: 600; background: var(--ink); padding: 1px 6px; }
@@ -249,7 +249,7 @@
 .sim-wins b { font-family: var(--display); font-weight: 400; font-size: 28px; }
 .sim-net { font-family: var(--display); font-size: 40px; }
 .sim-net .neg { color: #ffb3bf; }
-.sim-net .pos { color: #fff; background: var(--red); padding: 0 8px; }
+.sim-net .pos { color: #fff; background: #16a34a; padding: 0 8px; }
 
 .price-sec { background: var(--red); color: #fff; padding: 88px var(--gut); }
 .price-sec .sec-head, .loop, .plans { max-width: 1100px; margin-left: auto; margin-right: auto; }
