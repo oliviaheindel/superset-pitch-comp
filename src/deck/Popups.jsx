@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDeck } from '../engine.jsx';
 import { collected, remember } from './store.js';
+import Wordmark from '../Wordmark.jsx';
 
 /*
  * Slide 1: the popup storm. Popups keep landing on top of each other, every one asking for more.
@@ -10,18 +11,18 @@ import { collected, remember } from './store.js';
 const POPUPS = [
   { kind: 'cookie', title: 'We value your privacy 🍪', body: 'We and our 1,482 partners use cookies to personalise, measure, and mostly to sell.', yes: 'Accept all', no: 'Accept all (but grey)' },
   { kind: 'ask', key: 'name', title: 'Hey! What should we call you?', placeholder: 'First name', yes: 'Continue' },
-  { kind: 'perm', icon: '🔔', title: 'sellf.com wants to', body: 'Show notifications', yes: 'Allow', no: 'Also allow' },
+  { kind: 'perm', icon: '🔔', title: 'sell.yoursellf wants to', body: 'Show notifications', yes: 'Allow', no: 'Also allow' },
   { kind: 'ask', key: 'email', title: 'Get 10% off your own data', placeholder: 'Email address', yes: 'Claim my 10%' },
-  { kind: 'perm', icon: '📍', title: 'Allow "Sellf" to use your location?', body: 'Your location is used to find you. Constantly.', yes: 'Allow while using app', no: 'Allow always' },
+  { kind: 'perm', icon: '📍', title: 'Allow "sell.yoursellf" to use your location?', body: 'Your location is used to find you. Constantly.', yes: 'Allow while using app', no: 'Allow always' },
   { kind: 'ask', key: 'birthday', title: 'When\'s your birthday? 🎂', placeholder: 'MM / DD', yes: 'Save' },
-  { kind: 'perm', icon: '📇', title: 'Sellf would like to access your contacts', body: 'So we can sell them too. They\'ll never know.', yes: 'OK', no: 'Fine' },
+  { kind: 'perm', icon: '📇', title: 'sell.yoursellf would like to access your contacts', body: 'So we can sell them too. They\'ll never know.', yes: 'OK', no: 'Fine' },
   { kind: 'ask', key: 'pet', title: 'Security question', body: 'What was the name of your first pet?', placeholder: 'Totally just for security', yes: 'Secure me' },
   { kind: 'ask', key: 'street', title: 'Security question #2', body: 'What street did you grow up on?', placeholder: 'Also just for security', yes: 'Still secure' },
-  { kind: 'perm', icon: '🎙️', title: '"Sellf" would like to access the microphone', body: 'We heard you talking about air fryers.', yes: 'Allow', no: 'Allow (sad)' },
-  { kind: 'att', title: 'Allow "Sellf" to track your activity across other companies\' apps and websites?', yes: 'Allow', no: 'Ask App Not to Track' },
+  { kind: 'perm', icon: '🎙️', title: '"sell.yoursellf" would like to access the microphone', body: 'We heard you talking about air fryers.', yes: 'Allow', no: 'Allow (sad)' },
+  { kind: 'att', title: 'Allow "sell.yoursellf" to track your activity across other companies\' apps and websites?', yes: 'Allow', no: 'Ask App Not to Track' },
   { kind: 'ask', key: 'crush', title: 'Quick survey (1 of 1)', body: 'Who\'s your celebrity crush?', placeholder: 'For ad targeting purposes', yes: 'Submit' },
   { kind: 'rate', title: 'Enjoying having your data harvested?', body: 'Rate us on the App Store', yes: '★★★★★' },
-  { kind: 'perm', icon: '📷', title: 'Sellf wants to use your camera', body: 'Nice shirt, by the way.', yes: 'Allow', no: 'Allow anyway' },
+  { kind: 'perm', icon: '📷', title: 'sell.yoursellf wants to use your camera', body: 'Nice shirt, by the way.', yes: 'Allow', no: 'Allow anyway' },
   { kind: 'ask', key: 'screen', title: 'Be honest', body: 'What\'s your daily screen time?', placeholder: 'We already know. Just checking.', yes: 'Confess' },
   { kind: 'leave', title: 'Wait! Don\'t go!', body: 'You haven\'t given us everything yet.', yes: 'Fine, take it all' },
 ];
@@ -111,7 +112,7 @@ export function PopupStorm({ active }) {
   return (
     <div className="storm" data-noclick onPointerDown={start}>
       <div className="fake-site" aria-hidden={started}>
-        <p className="fs-logo">sellf<span>.com</span></p>
+        <p className="fs-logo"><Wordmark /></p>
         <div className="fs-hero">
           <span className="fs-line" /><span className="fs-line short" /><span className="fs-line" />
         </div>

@@ -30,3 +30,5 @@ img, svg, canvas { max-width: 100%; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
 .qr-box svg { display: block; width: 100%; height: auto; }
+.wm { white-space: nowrap; text-transform: none; }
+.wm-dot { color: var(--red); }

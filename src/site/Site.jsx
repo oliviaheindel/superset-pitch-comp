@@ -5,6 +5,7 @@ import CountUp from '../rb/CountUp.jsx';
 import DotGrid from '../rb/DotGrid.jsx';
 import ClickSpark from '../rb/ClickSpark.jsx';
 import { battery, cap, collectDevice, postSignup, useStats } from '../shared.js';
+import Wordmark from '../Wordmark.jsx';
 import './site.css';
 
 /* Adds .in when the element scrolls into view (once). */
@@ -57,8 +58,8 @@ const EXCLUSIVE_BUMP = 1.2;
 function Nav() {
   return (
     <header className="nav">
-      <a href="#top" className="logo" aria-label="Sellf home">SELLF<span>®</span></a>
-      <span className="rec"><i />collecting</span>
+      <a href="#top" className="logo" aria-label="sell.yoursellf home"><Wordmark /></a>
+      <span className="rec"><i /><span className="rec-t">collecting</span></span>
       <a href="#join" className="btn btn-red btn-sm">Sell me</a>
     </header>
   );
@@ -77,7 +78,7 @@ function Hero() {
           <Shuffle text="yourself." tag="span" className="h-line red" textAlign="left" duration={0.4} shuffleTimes={3} stagger={0.04} triggerOnHover rootMargin="0px" />
         </h1>
         <p className="hero-acc">literally.</p>
-        <p className="hero-body">Your data is already for sale. You're just not getting paid for it. Sellf sells it to the exact same companies and gives <b>you 50%</b>.</p>
+        <p className="hero-body">Your data is already for sale. You're just not getting paid for it. sell.yoursellf sells it to the exact same companies and gives <b>you 50%</b>.</p>
         <div className="hero-cta">
           <a href="#join" className="btn btn-red">Start selling me →</a>
           <a href="#how" className="btn btn-ghost">How it works</a>
@@ -113,7 +114,7 @@ function Live() {
 function How() {
   const steps = [
     ['01', 'We use the same trackers they use.', 'Cookies, pixels, SDKs, ad IDs. Nothing new. We\'re not inventing surveillance, we\'re just finally invoicing for it.'],
-    ['02', 'Turn it on across your devices.', 'Phone, laptop, tablet, TV. Once it\'s on, Sellf keeps everything. Everything everything.'],
+    ['02', 'Turn it on across your devices.', 'Phone, laptop, tablet, TV. Once it\'s on, we keep everything. Everything everything.'],
     ['03', 'We sell it to the exact same companies.', 'Same buyers. Same data. Same experience for you. The only difference is a Venmo notification.'],
   ];
   return (
@@ -132,7 +133,7 @@ function How() {
         ))}
       </ol>
       <div className="ba">
-        {['Before Sellf', 'After Sellf'].map((label, i) => (
+        {['Before sell.yoursellf', 'After sell.yoursellf'].map((label, i) => (
           <Reveal key={label} className={`ba-card ${i ? 'after' : ''}`} style={{ '--d': `${i * 160}ms` }}>
             <p className="ba-label">{label}</p>
             <div className="flow">
@@ -200,7 +201,7 @@ function Earn({ perms, setPerms, exclusive, setExclusive }) {
           <label className={`tg tg-ex ${exclusive ? 'on' : ''}`}>
             <input type="checkbox" checked={exclusive} onChange={(e) => setExclusive(e.target.checked)} />
             <span className="sw" aria-hidden="true" />
-            <span className="tg-t"><b>Sellf Exclusive™ · ${EXCLUSIVE_PRICE}/mo</b><small>We block every other company from keeping your data, so we're the only ones who can sell it to them.</small></span>
+            <span className="tg-t"><b>Exclusive™ · ${EXCLUSIVE_PRICE}/mo</b><small>We block every other company from keeping your data, so we're the only ones who can sell it to them.</small></span>
             <span className="tg-v">+${EXCLUSIVE_BUMP.toFixed(2)}</span>
           </label>
         </Reveal>
@@ -209,7 +210,7 @@ function Earn({ perms, setPerms, exclusive, setExclusive }) {
           <p className="pay-n"><Num value={monthly} /></p>
           {exclusive && (
             <div className="pay-net">
-              <p><span>Sellf Exclusive</span><span>−${EXCLUSIVE_PRICE.toFixed(2)}</span></p>
+              <p><span>Exclusive™</span><span>−${EXCLUSIVE_PRICE.toFixed(2)}</span></p>
               <p className="net"><span>Net</span><span className={net < 0 ? 'neg' : ''}><Num value={net} /></span></p>
               <p className="pay-joke">For the first time, you're losing money on your own terms.</p>
             </div>
@@ -275,14 +276,14 @@ function Join({ perms, exclusive }) {
                 <span>Email <em>optional, but it's worth $0.04</em></span>
                 <input type="email" maxLength={120} value={email} autoComplete="email" placeholder="you@literally.anything" onChange={(e) => setEmail(e.target.value)} />
               </label>
-              <p className="join-plan">Plan: <b>{exclusive ? 'Sellf Exclusive™' : 'Free'}</b> · Giving us: <b>{PERMS.filter((p) => perms[p.id]).map((p) => p.label.replace('Give us your ', '').replace('Turn it on across every ', 'every ')).join(', ')}</b> · <a href="#earn">change</a></p>
+              <p className="join-plan">Plan: <b>{exclusive ? 'Exclusive™' : 'Free'}</b> · Giving us: <b>{PERMS.filter((p) => perms[p.id]).map((p) => p.label.replace('Give us your ', '').replace('Turn it on across every ', 'every ')).join(', ')}</b> · <a href="#earn">change</a></p>
               {state.err && <p className="err" role="alert">{state.err}</p>}
               <button className="btn btn-red btn-big" disabled={state.status === 'sending'}>{state.status === 'sending' ? 'Listing you…' : 'Sell me'}</button>
-              <p className="fine">By clicking "Sell me" you agree to absolutely nothing. Sellf is a parody built for a pitch competition. We don't sell, share or track anything. Your first name may show up on the big screen.</p>
+              <p className="fine">By clicking "Sell me" you agree to absolutely nothing. sell.yoursellf is a parody built for a pitch competition. We don't sell, share or track anything. Your first name may show up on the big screen.</p>
             </form>
           ) : (
             <div className="lot" role="status">
-              <p className="lot-top"><span>LOT #{lot.n}</span><span>Sellf Marketplace</span></p>
+              <p className="lot-top"><span>LOT #{lot.n}</span><span>sell.yoursellf marketplace</span></p>
               <h2 className="lot-name">{cap(lot.name)}</h2>
               <p className="lot-desc">1 human · gently used · {device?.device?.toLowerCase()} included</p>
               <dl className="lot-dl">
@@ -315,9 +316,9 @@ function Join({ perms, exclusive }) {
 function Footer() {
   return (
     <footer className="foot">
-      <p className="foot-big">SELLF<span>®</span></p>
+      <p className="foot-big"><Wordmark /></p>
       <p className="foot-acc">you were already the product. now you're the shareholder.</p>
-      <p className="foot-fine">*Not forever. Not real. Sellf is a parody startup made in 30 minutes for a pitch competition. We don't take health or financial information. We don't take anything, actually.</p>
+      <p className="foot-fine">*Not forever. Not real. sell.yoursellf is a parody startup made in 30 minutes for a pitch competition. We don't take health or financial information. We don't take anything, actually.</p>
     </footer>
   );
 }
@@ -325,7 +326,7 @@ function Footer() {
 export default function Site() {
   const [perms, setPerms] = useState({ browser: true, phone: true, devices: false });
   const [exclusive, setExclusive] = useState(false);
-  useMemo(() => { document.title = 'Sellf — sell yourself, literally'; }, []);
+  useMemo(() => { document.title = 'sell.yoursellf — sell yourself, literally'; }, []);
   return (
     <ClickSpark fixed sparkColor="#e4002b" sparkSize={11} sparkRadius={20} sparkCount={9} duration={480}>
       <div className="site">

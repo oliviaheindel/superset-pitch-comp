@@ -1,4 +1,4 @@
-/* Sellf deck. Engine styles adapted from the MOXIE deck, recoloured red / black / white / blue. */
+/* sell.yoursellf deck. Engine styles adapted from the MOXIE deck, recoloured red / black / white / blue. */
 body.is-deck { overflow: hidden; background: var(--ink); --bar: 30px; --gutter: clamp(20px, 6vw, 110px); --blurple: var(--red); }
 body.is-deck #root { height: 100vh; height: 100dvh; }
 
@@ -63,7 +63,7 @@ body[data-theme="red"] .ripple i, body[data-theme="ink"] .ripple i, body[data-th
 .storm { position: absolute; inset: 0; overflow: hidden; background: var(--white); }
 .fake-site { position: absolute; inset: 0; display: grid; align-content: start; padding: 28px 6vw; gap: 30px; }
 .fs-logo { font-family: var(--display); font-size: 34px; }
-.fs-logo span { color: var(--red); }
+
 .fs-hero { display: grid; gap: 14px; max-width: 700px; }
 .fs-line { height: 46px; background: #ececf0; }
 .fs-line.short { width: 60%; }
@@ -117,9 +117,12 @@ body[data-theme="red"] .ripple i, body[data-theme="ink"] .ripple i, body[data-th
 .you-make { margin-top: 2cqh; }
 
 /* 4. name */
-.logo-xl { font-size: clamp(110px, 40cqh, 460px); line-height: .82; letter-spacing: .01em; }
-.logo-xl span { font-size: .3em; vertical-align: top; color: var(--ink); }
-.name-sub { font-size: clamp(40px, 9cqh, 110px) !important; color: var(--ink); line-height: 1 !important; }
+.logo-xl { font-size: clamp(64px, min(14cqw, 34cqh), 320px); line-height: .9; }
+.logo-xl .logo-shuffle { font-size: inherit !important; line-height: .9 !important; text-transform: none !important; }
+.theme-red .wm-dot, .theme-red .logo-xl { color: #fff; }
+.theme-red .logo-xl .wm-dot { color: var(--ink); }
+.ba2-card .wm-dot { color: var(--red); }
+.theme-ink .big .wm-dot { color: var(--red); }
 
 /* 5. how */
 .how-rows { display: grid; gap: 3.2cqh; }

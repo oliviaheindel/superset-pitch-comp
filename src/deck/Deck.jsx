@@ -7,6 +7,7 @@ import CountUp from '../rb/CountUp.jsx';
 import { QRBox } from '../QR.jsx';
 import { battery, cap, collectDevice, postSignup, useStats } from '../shared.js';
 import { PopupStorm } from './Popups.jsx';
+import Wordmark from '../Wordmark.jsx';
 import { collected, startedAt } from './store.js';
 import './deck.css';
 
@@ -46,11 +47,11 @@ function Receipt({ active }) {
     <div className="pad split2">
       <div>
         <p className="eyebrow">Receipt</p>
-        <h2 className="mid">That took<br /><span className="red">{secs} seconds.</span></h2>
+        <h2 className="mid">That took<br /><span className="red">{secs} second{secs === 1 ? '' : 's'}.</span></h2>
         <p className="under">and you said yes to all of it.</p>
       </div>
       <div className="receipt">
-        <p className="rc-h"><span>SELLF DATA CO.</span><span>{new Date().toLocaleDateString()}</span></p>
+        <p className="rc-h"><span>SELL.YOURSELLF DATA CO.</span><span>{new Date().toLocaleDateString()}</span></p>
         <ul>
           {rows.map(([k, v], i) => (
             <li key={k} style={{ '--i': i }}>
@@ -82,9 +83,10 @@ function Name({ active }) {
   return (
     <div className="pad center">
       <p className="eyebrow light">Introducing</p>
-      <h1 className="logo-xl">SELLF<span>®</span></h1>
-      {active && <Shuffle text="Sell yourself." tag="p" className="name-sub" duration={0.45} shuffleTimes={3} stagger={0.05} rootMargin="0px" triggerOnHover />}
-      <p className="acc-xl">literally.</p>
+      <h1 className="logo-xl">
+        {active ? <Shuffle text="sell.yoursellf" tag="span" className="logo-shuffle" duration={0.45} shuffleTimes={3} stagger={0.04} rootMargin="0px" triggerOnHover /> : <Wordmark />}
+      </h1>
+      <p className="acc-xl">sell yourself. literally.</p>
     </div>
   );
 }
@@ -129,8 +131,8 @@ function Same({ beat }) {
   return (
     <div className="pad center">
       <div className="ba2">
-        <div className="ba2-card"><p className="ba2-l">Before Sellf</p><Flow /></div>
-        <div className="ba2-card after"><p className="ba2-l">After Sellf</p><Flow paid /></div>
+        <div className="ba2-card"><p className="ba2-l">Before</p><Flow /></div>
+        <div className="ba2-card after"><p className="ba2-l">After <Wordmark /></p><Flow paid /></div>
       </div>
       <Show when={beat >= 1}><h2 className="mid">Nothing changes. <span className="acc">That's the feature.</span></h2></Show>
     </div>
@@ -165,7 +167,7 @@ function Exclusive({ beat }) {
   return (
     <div className="pad center">
       <p className="eyebrow light">Premium</p>
-      <h2 className="big">Sellf <span className="red">Exclusive™</span></h2>
+      <h2 className="big"><Wordmark /> <span className="red">Exclusive™</span></h2>
       <p className="body-xl">We block every other company from keeping your data…</p>
       <Show when={beat >= 1}><p className="body-xl strong">…so we're the only ones who can <span className="red">sell it to them.</span></p></Show>
       <Show when={beat >= 2}><p className="acc-l">Your data has never been more exclusive. Or more available.</p></Show>
@@ -205,7 +207,7 @@ function Pricing({ beat }) {
       <p className="eyebrow light">Unit economics</p>
       <table className="price">
         <tbody>
-          <tr><td>Sellf Exclusive™</td><td>$9.99/mo</td></tr>
+          <tr><td>Exclusive™</td><td>$9.99/mo</td></tr>
           <tr><td>Average payout</td><td>$4.20/mo</td></tr>
           <tr className={`net ${beat >= 1 ? 'on' : ''}`}><td>Net</td><td>−$5.79/mo</td></tr>
         </tbody>
@@ -241,7 +243,7 @@ function Close() {
     <div className="pad center close">
       <h2 className="big">50% of something</h2>
       <h2 className="big outline">beats 100% of nothing.</h2>
-      <p className="acc-l">Sellf. We're raising $5M for 25% of you.</p>
+      <p className="acc-l">sell.yoursellf. We're raising $5M for 25% of you.</p>
       <div className="close-qr"><QRBox url={SITE} /><span>{HOST}</span></div>
       <Unlock className="sr-only">End</Unlock>
     </div>
@@ -252,7 +254,7 @@ const SLIDES = [
   { id: 'storm', theme: 'white', Component: Storm, label: 'Popups' },
   { id: 'receipt', theme: 'ink', enter: 'zoom', Component: Receipt, label: 'What we collected' },
   { id: 'problem', theme: 'white', enter: 'push', beats: 1, Component: Problem, label: 'The problem' },
-  { id: 'name', theme: 'red', enter: 'dome', Component: Name, label: 'Sellf' },
+  { id: 'name', theme: 'red', enter: 'dome', Component: Name, label: 'sell.yoursellf' },
   { id: 'how', theme: 'white', enter: 'arch', beats: 2, Component: How, label: 'How it works' },
   { id: 'same', theme: 'blue', enter: 'swap', beats: 1, Component: Same, label: 'Nothing changes' },
   { id: 'earn', theme: 'white', enter: 'flip', beats: 1, Component: Earn, label: 'Earn more' },
@@ -266,14 +268,14 @@ const SLIDES = [
 function Chrome({ idx, slides }) {
   return (
     <>
-      <div className="fbar fbar-top"><span className="fbar-logo">SELLF®</span><span className="rec"><i />collecting</span></div>
+      <div className="fbar fbar-top"><span className="fbar-logo"><Wordmark /></span><span className="rec"><i />collecting</span></div>
       <div className="fbar fbar-bottom"><span className="fbar-num">{String(idx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</span><span className="fbar-hint">← → to move · {HOST}</span></div>
     </>
   );
 }
 
 export default function Deck() {
-  useEffect(() => { document.title = 'Sellf — the pitch'; document.body.classList.add('is-deck'); }, []);
+  useEffect(() => { document.title = 'sell.yoursellf — the pitch'; document.body.classList.add('is-deck'); }, []);
   return (
     <ClickSpark sparkColor="#e4002b" sparkSize={12} sparkRadius={22} sparkCount={10} duration={500}>
       <Engine slides={SLIDES} chrome={(ctx) => <Chrome {...ctx} />} />
