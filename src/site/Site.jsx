@@ -13,7 +13,7 @@ function useReveal() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('in'); io.disconnect(); } }, { threshold: 0.18 });
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('in'); io.disconnect(); } }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, []);
