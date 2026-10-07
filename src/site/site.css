@@ -285,3 +285,7 @@ fieldset.fld { border: 0; padding: 0; margin: 0; }
 .lot.lapsed .lot-name { color: var(--ink); }
 .lot.lapsed .btn { margin-top: 16px; }
 .lot .stamp { font-size: 30px; top: 40px; bottom: auto; right: 12px; }
+/* money is green */
+.bd-paid, .bd-total b, .bk-to b, .plan-p, .lot-dl div:first-child dd { color: #22c55e; }
+.bd-bar { background: #22c55e; }
+.plan.prem .plan-p { color: #fff; }
