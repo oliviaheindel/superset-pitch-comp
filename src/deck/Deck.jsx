@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Deck as Engine } from '../engine.jsx';
 import ClickSpark from '../rb/ClickSpark.jsx';
 import CountUp from '../rb/CountUp.jsx';
@@ -13,27 +13,6 @@ const HOST = location.host;
 const Show = ({ when, children, className = '', as: T = 'div', d = 0 }) => (
   <T className={`show ${when ? 'on' : ''} ${className}`} style={{ '--d': `${d}ms` }}>{children}</T>
 );
-
-/* ---------- 1. blank, for the video ----------
-   Plays public/video.mp4 if it exists, or drag any video file onto the slide. Click plays/pauses. */
-function Video({ active }) {
-  const [src, setSrc] = useState('/video.mp4');
-  const [ok, setOk] = useState(false);
-  const v = useRef(null);
-  useEffect(() => { if (!active) v.current?.pause(); }, [active]);
-  const onDrop = (e) => {
-    e.preventDefault();
-    const f = e.dataTransfer.files?.[0];
-    if (f && f.type.startsWith('video/')) { setSrc(URL.createObjectURL(f)); setOk(true); }
-  };
-  return (
-    <div className="vid" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
-      <video ref={v} src={src} playsInline preload="auto" className={ok ? 'on' : ''} data-noclick={ok ? '' : undefined}
-        onLoadedData={() => setOk(true)} onError={() => setOk(false)}
-        onClick={(e) => { e.stopPropagation(); const el = v.current; if (el) (el.paused ? el.play() : el.pause()); }} />
-    </div>
-  );
-}
 
 /* ---------- 2. what the company does ---------- */
 const AI = ['OpenAI', 'Anthropic', 'Google DeepMind', 'xAI', 'Mistral', 'Meta AI'];
@@ -120,13 +99,11 @@ function Pricing({ beat, active }) {
 }
 
 const SLIDES = [
-  { id: 'video', theme: 'ink', Component: Video, label: 'Video' },
-  { id: 'what', theme: 'white', enter: 'dome', beats: 3, Component: What, label: 'What we do' },
+  { id: 'what', theme: 'white', beats: 3, Component: What, label: 'What we do' },
   { id: 'pricing', theme: 'white', enter: 'arch', beats: 2, Component: Pricing, label: 'Pricing + application' },
 ];
 
 function Chrome({ idx, slides }) {
-  if (idx === 0) return null; // the video slide stays blank
   return (
     <>
       <div className="fbar fbar-top"><span className="fbar-logo"><Wordmark /></span><span className="rec"><i />collecting</span></div>
