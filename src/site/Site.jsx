@@ -5,10 +5,12 @@ import CountUp from '../rb/CountUp.jsx';
 import DotGrid from '../rb/DotGrid.jsx';
 import ClickSpark from '../rb/ClickSpark.jsx';
 import { battery, cap, collectDevice, postSignup, useStats } from '../shared.js';
+import { BUCKETS, BUYERS, MONTHS, PREMIUM_PRICE, PRICE, simulateYear } from '../model.js';
 import Wordmark from '../Wordmark.jsx';
 import './site.css';
 
-/* Adds .in when the element scrolls into view (once). */
+const DEMO = import.meta.env.MODE === 'single'; // the preview build has no backend
+
 function useReveal() {
   const ref = useRef(null);
   useEffect(() => {
@@ -22,7 +24,6 @@ function useReveal() {
 }
 const Reveal = ({ as: T = 'div', className = '', children, ...p }) => <T ref={useReveal()} className={`rv ${className}`} {...p}>{children}</T>;
 
-/* A number that rolls to its new value. */
 function Num({ value, decimals = 2, prefix = '$' }) {
   const [shown, setShown] = useState(value);
   const from = useRef(value);
@@ -37,30 +38,17 @@ function Num({ value, decimals = 2, prefix = '$' }) {
     raf = requestAnimationFrame(step);
     return () => { cancelAnimationFrame(raf); from.current = b; };
   }, [value]);
-  const neg = shown < -0.004;
-  return <span className="num">{neg ? '−' : ''}{prefix}{Math.abs(shown).toFixed(decimals)}</span>;
+  return <span className="num">{shown < -0.004 ? '−' : ''}{prefix}{Math.abs(shown).toFixed(decimals)}</span>;
 }
 
-const TICKER = ['location', 'search history', 'screen time', '3am snack orders', 'that one playlist', 'step count', 'typing speed', 'who you stalk', 'cart you abandoned', 'your mom\'s birthday', 'scroll speed', 'wifi name'];
-
-const PERMS = [
-  { id: 'browser', label: 'Browser tracking', note: 'Cookies, pixels, the usual. They already do this.', cut: 0.42, locked: true },
-  { id: 'phone', label: 'Give us your phone', note: 'Apps, location, contacts, screen time. The good stuff.', cut: 1.8 },
-  { id: 'devices', label: 'Turn it on across every device', note: 'Laptop, tablet, TV, car, smart fridge. We keep everything.', cut: 3.1 },
-];
-const NEVER = [
-  { label: 'Health data', note: 'Never. We have standards.' },
-  { label: 'Financial data', note: 'Never. They\'re low, but they\'re there.' },
-];
-const EXCLUSIVE_PRICE = 9.99;
-const EXCLUSIVE_BUMP = 1.2;
+const TICKER = ['location', 'search history', 'screen time', 'group chats', 'voice memos', '3am snack orders', 'that one playlist', 'who you stalk', 'cart you abandoned', 'scroll speed', 'wifi name'];
 
 function Nav() {
   return (
     <header className="nav">
       <a href="#top" className="logo" aria-label="sell.yoursellf home"><Wordmark /></a>
       <span className="rec"><i /><span className="rec-t">collecting</span></span>
-      <a href="#join" className="btn btn-red btn-sm">Sell me</a>
+      <a href="#apply" className="btn btn-red btn-sm">Apply</a>
     </header>
   );
 }
@@ -72,16 +60,16 @@ function Hero() {
         <DotGrid dotSize={5} gap={22} baseColor="#d8ddf7" activeColor="#e4002b" proximity={130} shockRadius={220} shockStrength={4} resistance={700} returnDuration={1.4} />
       </div>
       <div className="hero-in">
-        <p className="eyebrow">The first data broker that pays you</p>
+        <p className="eyebrow">Membership by application only</p>
         <h1 className="hero-h">
           <Shuffle text="Sell" tag="span" className="h-line" textAlign="left" duration={0.4} shuffleTimes={2} stagger={0.04} triggerOnHover rootMargin="0px" />
           <Shuffle text="yourself." tag="span" className="h-line red" textAlign="left" duration={0.4} shuffleTimes={3} stagger={0.04} triggerOnHover rootMargin="0px" />
         </h1>
         <p className="hero-acc">literally.</p>
-        <p className="hero-body">Your data is already for sale. You're just not getting paid for it. sell.yoursellf sells it to the exact same companies and gives <b>you 50%</b>.</p>
+        <p className="hero-body">California gave you a <b className="blue-b">Delete</b> button. We give you a <b>Sell</b> button. Your data becomes a portfolio: we sell it to the data companies <i>and</i> the AI companies already taking it, and you keep 50%.</p>
         <div className="hero-cta">
-          <a href="#join" className="btn btn-red">Start selling me →</a>
-          <a href="#how" className="btn btn-ghost">How it works</a>
+          <a href="#apply" className="btn btn-red">Apply to sell yourself →</a>
+          <a href="#portfolio" className="btn btn-ghost">See a portfolio</a>
         </div>
       </div>
       <div className="ticker" aria-hidden="true">
@@ -93,16 +81,28 @@ function Hero() {
   );
 }
 
+function Drop() {
+  return (
+    <section className="drop">
+      <Reveal className="drop-in">
+        <div className="drop-btn del"><span>Delete</span><small>California's DROP: tell 600+ data brokers to delete you. Live since Aug 2026.</small></div>
+        <span className="drop-vs">vs</span>
+        <div className="drop-btn sell"><span>Sell</span><small>sell.yoursellf: make those same companies pay you instead.</small></div>
+      </Reveal>
+    </section>
+  );
+}
+
 function Live() {
   const { count, names, loaded } = useStats(5000);
   return (
     <section className="live">
       <Reveal className="live-in">
-        <p className="eyebrow light">Live from the marketplace</p>
+        <p className="eyebrow light">Live from the waitlist</p>
         <div className="live-n"><CountUp to={count} from={0} duration={1.2} separator="," /></div>
-        <p className="live-l">{count === 1 ? 'person has' : 'people have'} already sold themselves{loaded ? '.' : '…'}</p>
+        <p className="live-l">{count === 1 ? 'person has' : 'people have'} applied to sell themselves{loaded ? '.' : '…'}</p>
         {names.length > 0 && (
-          <ul className="live-names" aria-label="Recently sold">
+          <ul className="live-names" aria-label="Recent applicants">
             {names.slice(0, 14).map((n, i) => <li key={n + i} style={{ '--i': i }}>{cap(n)}</li>)}
           </ul>
         )}
@@ -113,15 +113,15 @@ function Live() {
 
 function How() {
   const steps = [
-    ['01', 'We use the same trackers they use.', 'Cookies, pixels, SDKs, ad IDs. Nothing new. We\'re not inventing surveillance, we\'re just finally invoicing for it.'],
-    ['02', 'Turn it on across your devices.', 'Phone, laptop, tablet, TV. Once it\'s on, we keep everything. Everything everything.'],
-    ['03', 'We sell it to the exact same companies.', 'Same buyers. Same data. Same experience for you. The only difference is a Venmo notification.'],
+    ['01', 'Apply.', 'You can\'t just sign up. Not everyone is worth buying. (Everyone is worth buying.)'],
+    ['02', 'Turn it on across your devices.', 'We use the exact same trackers everyone else uses, and keep everything. Never health data. Never financial data.'],
+    ['03', 'We sell you. You see who bought.', 'Data companies and AI companies bid on your portfolio. You get a breakdown of who took what, and you keep 50%.'],
   ];
   return (
     <section className="how" id="how">
       <Reveal className="sec-head">
         <p className="eyebrow">How it works</p>
-        <h2 className="h2">Nothing changes.<br /><span className="blue">That's the feature.</span></h2>
+        <h2 className="h2">They already take it.<br /><span className="blue">Now they pay you.</span></h2>
       </Reveal>
       <ol className="steps">
         {steps.map(([n, t, d], i) => (
@@ -132,167 +132,232 @@ function How() {
           </Reveal>
         ))}
       </ol>
-      <div className="ba">
-        {['Before sell.yoursellf', 'After sell.yoursellf'].map((label, i) => (
-          <Reveal key={label} className={`ba-card ${i ? 'after' : ''}`} style={{ '--d': `${i * 160}ms` }}>
-            <p className="ba-label">{label}</p>
-            <div className="flow">
-              <span className="node you">You</span>
-              <span className="arrow" />
-              <span className="node">📱 your data</span>
-              <span className="arrow" />
-              <span className="node buyers">Meta · Google · TikTok · ???</span>
-            </div>
-            <p className="ba-foot">{i ? <>+ <b>$$$</b> to you</> : 'You get: $0.00'}</p>
-          </Reveal>
-        ))}
-      </div>
     </section>
   );
 }
 
-function Split() {
-  const parts = [['You', 50, 'red'], ['Us', 25, 'blue'], ['Our investors', 25, 'ink']];
+function Breakdown() {
+  const [tab, setTab] = useState('high');
+  const rows = BUYERS[tab];
+  const max = Math.max(...rows.map((r) => r.paid), 1);
+  const total = rows.reduce((s, r) => s + r.paid, 0);
   return (
-    <section className="split-sec">
+    <section className="bd" id="breakdown">
       <Reveal className="sec-head">
-        <p className="eyebrow light">The split</p>
-        <h2 className="h2">50% of something<br />beats 100% of nothing.</h2>
+        <p className="eyebrow light">Your monthly statement</p>
+        <h2 className="h2">Who wanted you,<br />and what they got.</h2>
       </Reveal>
-      <Reveal className="bars">
-        {parts.map(([who, pct, c], i) => (
-          <div key={who} className="bar-row" style={{ '--w': `${pct}%`, '--d': `${200 + i * 180}ms` }}>
-            <span className="bar-who">{who}</span>
-            <span className={`bar bar-${c}`}><b>{pct}%</b></span>
-          </div>
-        ))}
+      <Reveal className="bd-card">
+        <div className="tabs" role="tablist">
+          <button role="tab" aria-selected={tab === 'high'} className={tab === 'high' ? 'on' : ''} onClick={() => setTab('high')}>AI companies</button>
+          <button role="tab" aria-selected={tab === 'low'} className={tab === 'low' ? 'on' : ''} onClick={() => setTab('low')}>Data companies</button>
+        </div>
+        <ul className="bd-rows" key={tab}>
+          {rows.map((r, i) => (
+            <li key={r.co} style={{ '--i': i, '--w': `${(r.paid / max) * 100}%` }}>
+              <div className="bd-top"><b>{r.co}</b><span className="bd-paid">${r.paid.toFixed(2)}</span></div>
+              <p><span>Took:</span> {r.took}</p>
+              <p><span>Got out of it:</span> {r.did}</p>
+              <i className="bd-bar" />
+            </li>
+          ))}
+        </ul>
+        <p className="bd-total"><span>Your cut this month</span><b>${total.toFixed(2)}</b></p>
+        <p className="bd-fine">Sample statement. Made-up numbers. It's a parody.</p>
       </Reveal>
-      <Reveal as="p" className="split-note">Is that a lot of people taking a cut of you? Yes. But now you're one of them.</Reveal>
     </section>
   );
 }
 
-function Earn({ perms, setPerms, exclusive, setExclusive }) {
-  const monthly = PERMS.reduce((s, p) => s + (perms[p.id] ? p.cut : 0), 0) + (exclusive ? EXCLUSIVE_BUMP : 0);
-  const net = monthly - (exclusive ? EXCLUSIVE_PRICE : 0);
+function Portfolio({ high, setHigh }) {
+  const [seed, setSeed] = useState(7);
+  const year = useMemo(() => simulateYear(high / 100, seed), [high, seed]);
+  const wins = year.filter((v) => v > PRICE).length;
+  const net = year.reduce((s, v) => s + v - PRICE, 0);
+  const top = Math.max(60, ...year);
   return (
-    <section className="earn" id="earn">
+    <section className="pf" id="portfolio">
       <Reveal className="sec-head">
-        <p className="eyebrow">Earnings calculator</p>
-        <h2 className="h2">The more you give,<br /><span className="red">the more you make.</span></h2>
+        <p className="eyebrow">Your data portfolio</p>
+        <h2 className="h2">Pick your risk.<br /><span className="red">Monetize yourself.</span></h2>
       </Reveal>
-      <div className="earn-grid">
-        <Reveal className="toggles">
-          {PERMS.map((p) => (
-            <label key={p.id} className={`tg ${perms[p.id] ? 'on' : ''} ${p.locked ? 'locked' : ''}`}>
-              <input type="checkbox" checked={!!perms[p.id]} disabled={p.locked} onChange={(e) => setPerms((s) => ({ ...s, [p.id]: e.target.checked }))} />
-              <span className="sw" aria-hidden="true" />
-              <span className="tg-t"><b>{p.label}</b><small>{p.note}</small></span>
-              <span className="tg-v">+${p.cut.toFixed(2)}</span>
-            </label>
-          ))}
-          {NEVER.map((p) => (
-            <div key={p.label} className="tg never">
-              <span className="sw" aria-hidden="true" />
-              <span className="tg-t"><b>{p.label}</b><small>{p.note}</small></span>
-              <span className="tg-v">🔒</span>
-            </div>
-          ))}
-          <label className={`tg tg-ex ${exclusive ? 'on' : ''}`}>
-            <input type="checkbox" checked={exclusive} onChange={(e) => setExclusive(e.target.checked)} />
-            <span className="sw" aria-hidden="true" />
-            <span className="tg-t"><b>Exclusive™ · ${EXCLUSIVE_PRICE}/mo</b><small>We block every other company from keeping your data, so we're the only ones who can sell it to them.</small></span>
-            <span className="tg-v">+${EXCLUSIVE_BUMP.toFixed(2)}</span>
+      <div className="pf-grid">
+        <Reveal className="buckets">
+          {['low', 'high'].map((k) => {
+            const b = BUCKETS[k];
+            const pct = k === 'high' ? high : 100 - high;
+            return (
+              <div key={k} className={`bucket b-${k}`}>
+                <div className="bk-top"><span className="bk-name">{b.name}</span><span className="bk-pct">{pct}%</span></div>
+                <p className="bk-what">{b.what}</p>
+                <p className="bk-items">{b.items}</p>
+                <p className="bk-to">→ {b.to} · <b>{b.range}</b></p>
+                <p className="bk-note">{b.note}</p>
+              </div>
+            );
+          })}
+          <label className="slider">
+            <span>Low risk</span>
+            <input type="range" min="0" max="100" step="5" value={high} onChange={(e) => setHigh(Number(e.target.value))} aria-label="Share of your portfolio in high risk" />
+            <span>High risk</span>
           </label>
         </Reveal>
-        <Reveal className="payout">
-          <p className="pay-l">You keep (per month)</p>
-          <p className="pay-n"><Num value={monthly} /></p>
-          {exclusive && (
-            <div className="pay-net">
-              <p><span>Exclusive™</span><span>−${EXCLUSIVE_PRICE.toFixed(2)}</span></p>
-              <p className="net"><span>Net</span><span className={net < 0 ? 'neg' : ''}><Num value={net} /></span></p>
-              <p className="pay-joke">For the first time, you're losing money on your own terms.</p>
-            </div>
-          )}
-          {!exclusive && <p className="pay-joke">That's {monthly > 4 ? 'basically a latte' : monthly > 2 ? 'almost a latte' : 'a latte foam'}. Every month. Forever.*</p>}
-          <a href="#join" className="btn btn-white">Lock in this rate →</a>
+        <Reveal className="sim">
+          <p className="sim-l">A simulated year · ${PRICE}/mo membership</p>
+          <div className="chart" style={{ '--line-n': PRICE / top }}>
+            {year.map((v, i) => (
+              <div key={i} className={`col ${v > PRICE ? 'win' : ''}`} style={{ '--h': `${(v / top) * 100}%` }} title={`${MONTHS[i]}: $${v.toFixed(2)}`}>
+                <i /><span>{MONTHS[i][0]}</span>
+              </div>
+            ))}
+            <em className="fee">${PRICE} fee</em>
+          </div>
+          <p className="sim-wins">You profited <b>{wins} of 12</b> months.</p>
+          <p className="sim-net">Year: <span className={net < 0 ? 'neg' : 'pos'}><Num value={net} /></span></p>
+          <button className="btn btn-white" onClick={() => setSeed((s) => s + 1)}>Simulate another year</button>
         </Reveal>
       </div>
     </section>
   );
 }
 
-function Join({ perms, exclusive }) {
+function Pricing() {
+  const loop = ['Apply', 'Get accepted', `Pay $${PRICE} every month to stay on the market`, 'Miss a payment? You\'re delisted. Reapply.'];
+  return (
+    <section className="price-sec" id="pricing">
+      <Reveal className="sec-head">
+        <p className="eyebrow light">Pricing</p>
+        <h2 className="h2">You don't sign up.<br />You apply.</h2>
+      </Reveal>
+      <Reveal as="ol" className="loop">
+        {loop.map((t, i) => <li key={t} style={{ '--d': `${i * 140}ms` }}><span>{i + 1}</span>{t}</li>)}
+      </Reveal>
+      <div className="plans">
+        <Reveal className="plan">
+          <p className="plan-n">Member</p>
+          <p className="plan-p">${PRICE}<small>/mo</small></p>
+          <ul><li>Your data portfolio, low + high risk</li><li>Monthly statement of who bought you</li><li>You keep 50% of every sale</li><li>Some months you profit. Some months you don't.</li></ul>
+        </Reveal>
+        <Reveal className="plan prem" style={{ '--d': '140ms' }}>
+          <p className="plan-n">Premium · Off the Market</p>
+          <p className="plan-p">${PREMIUM_PRICE}<small>/mo</small></p>
+          <ul><li>No company gets your data. At all.</li><li>Not data brokers. Not AI companies. Nobody.</li><li>You earn $0 and feel incredible</li></ul>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+const DEVICES = ['Phone', 'Laptop', 'Tablet', 'TV', 'Car', 'Smart fridge'];
+const REVIEW = ['Reading your screen time…', 'Skimming your group chats…', 'Asking OpenAI if they want you…', 'Checking your credit— kidding. We never touch financial data.', 'Decision made.'];
+
+function Apply({ high }) {
   const [device, setDevice] = useState(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [state, setState] = useState({ status: 'idle', err: '' });
-  const [lot, setLot] = useState(null);
-  const typedAt = useRef(null);
+  const [f, setF] = useState({ name: '', email: '', devices: ['Phone', 'Laptop'], screen: '5–8 hours', why: '', plan: 'member' });
+  const [stage, setStage] = useState('form'); // form → review → accepted → lapsed
+  const [step, setStep] = useState(0);
+  const [err, setErr] = useState('');
+  const [app, setApp] = useState(null);
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
-    const d = collectDevice();
-    setDevice(d);
+    setDevice(collectDevice());
     battery().then((b) => b && setDevice((x) => ({ ...x, battery: b })));
   }, []);
-
-  const monthly = PERMS.reduce((s, p) => s + (perms[p.id] ? p.cut : 0), 0) + (exclusive ? EXCLUSIVE_BUMP : 0);
+  const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }));
+  const toggleDev = (d) => setF((s) => ({ ...s, devices: s.devices.includes(d) ? s.devices.filter((x) => x !== d) : [...s.devices, d] }));
 
   const submit = async (e) => {
     e.preventDefault();
-    if (state.status === 'sending') return;
-    setState({ status: 'sending', err: '' });
+    setErr('');
+    setStage('review');
+    setStep(0);
+    const save = DEMO ? Promise.resolve() : postSignup({
+      source: 'site', name: f.name, email: f.email, plan: f.plan,
+      answers: { devices: f.devices.join(', '), screenTime: f.screen, why: f.why, highRisk: `${high}%` }, device,
+    });
+    save.catch(() => {}); // handled below, after the review animation
+    for (let i = 1; i < REVIEW.length; i += 1) { await new Promise((r) => setTimeout(r, 750)); setStep(i); }
     try {
-      const secs = typedAt.current ? Math.round((Date.now() - typedAt.current) / 1000) : 0;
-      await postSignup({ source: 'site', name, email, plan: exclusive ? 'exclusive' : 'free', perms, device: { ...device, secondsToSellOut: String(secs) } });
-      setLot({ n: String(Math.floor(1000 + Math.random() * 8999)), name: name.trim().split(/\s+/)[0], monthly, secs });
-      setState({ status: 'done', err: '' });
-    } catch (err) {
-      setState({ status: 'idle', err: err.message });
+      await save;
+      setApp({ n: String(Math.floor(1000 + Math.random() * 8999)), name: f.name.trim().split(/\s+/)[0] });
+      setStage('accepted');
+    } catch (x) {
+      setErr(x.message);
+      setStage('form');
     }
   };
 
   const facts = device ? [
     ['Device', device.device], ['OS', device.os], ['Browser', device.browser], ['Screen', device.screen],
     ['Time zone', device.timezone], ['Language', device.language], ['Local time', device.localTime],
-    ['Battery', device.battery], ['CPU cores', device.cores], ['Dark mode', device.darkMode], ['Vibe', device.vibe],
+    ['Battery', device.battery], ['CPU cores', device.cores], ['Vibe', device.vibe],
   ].filter(([, v]) => v) : [];
+  const prem = f.plan === 'premium';
 
   return (
-    <section className="join" id="join">
+    <section className="join" id="apply">
       <div className="join-grid">
         <Reveal className="join-form-wrap">
-          {state.status !== 'done' ? (
+          {stage === 'form' && (
             <form className="join-form" onSubmit={submit}>
-              <p className="eyebrow light">Sign up · takes 10 seconds · lasts forever</p>
-              <h2 className="h2">Put yourself<br />on the market.</h2>
-              <label className="fld">
-                <span>First name</span>
-                <input required maxLength={60} value={name} autoComplete="given-name" placeholder="Your name (worth $0.02)"
-                  onChange={(e) => { setName(e.target.value); if (!typedAt.current) typedAt.current = Date.now(); }} />
-              </label>
-              <label className="fld">
-                <span>Email <em>optional, but it's worth $0.04</em></span>
-                <input type="email" maxLength={120} value={email} autoComplete="email" placeholder="you@literally.anything" onChange={(e) => setEmail(e.target.value)} />
-              </label>
-              <p className="join-plan">Plan: <b>{exclusive ? 'Exclusive™' : 'Free'}</b> · Giving us: <b>{PERMS.filter((p) => perms[p.id]).map((p) => p.label.replace('Give us your ', '').replace('Turn it on across every ', 'every ')).join(', ')}</b> · <a href="#earn">change</a></p>
-              {state.err && <p className="err" role="alert">{state.err}</p>}
-              <button className="btn btn-red btn-big" disabled={state.status === 'sending'}>{state.status === 'sending' ? 'Listing you…' : 'Sell me'}</button>
-              <p className="fine">By clicking "Sell me" you agree to absolutely nothing. sell.yoursellf is a parody built for a pitch competition. We don't sell, share or track anything. Your first name may show up on the big screen.</p>
+              <p className="eyebrow light">Application · takes 30 seconds · acceptance not guaranteed*</p>
+              <h2 className="h2">Apply to be<br />on the market.</h2>
+              <label className="fld"><span>First name</span>
+                <input required maxLength={60} value={f.name} onChange={set('name')} autoComplete="given-name" placeholder="Your name (worth $0.02)" /></label>
+              <label className="fld"><span>Email <em>optional, but it's worth $0.04</em></span>
+                <input type="email" maxLength={120} value={f.email} onChange={set('email')} autoComplete="email" placeholder="you@literally.anything" /></label>
+              <fieldset className="fld"><span>Devices we can track</span>
+                <div className="pick">{DEVICES.map((d) => (
+                  <button type="button" key={d} className={f.devices.includes(d) ? 'on' : ''} aria-pressed={f.devices.includes(d)} onClick={() => toggleDev(d)}>{d}</button>
+                ))}</div></fieldset>
+              <label className="fld"><span>Daily screen time</span>
+                <select value={f.screen} onChange={set('screen')}>
+                  <option>Under 2 hours (suspicious)</option><option>2–5 hours</option><option>5–8 hours</option><option>8+ hours (ideal candidate)</option>
+                </select></label>
+              <label className="fld"><span>Why would a company want your data?</span>
+                <input maxLength={140} value={f.why} onChange={set('why')} placeholder="I have a lot of opinions about air fryers" /></label>
+              <div className="fld"><span>Plan</span>
+                <div className="pick plan-pick">
+                  <button type="button" className={!prem ? 'on' : ''} aria-pressed={!prem} onClick={() => setF((s) => ({ ...s, plan: 'member' }))}>Member · ${PRICE}/mo</button>
+                  <button type="button" className={prem ? 'on' : ''} aria-pressed={prem} onClick={() => setF((s) => ({ ...s, plan: 'premium' }))}>Off the Market · ${PREMIUM_PRICE}/mo</button>
+                </div></div>
+              {err && <p className="err" role="alert">{err}</p>}
+              <button className="btn btn-red btn-big">Submit application</button>
+              <p className="fine">*It's guaranteed. sell.yoursellf is a parody built for a pitch competition. Nobody is charged, nothing is sold, nothing is tracked. Your first name may show up on the big screen.</p>
             </form>
-          ) : (
+          )}
+          {stage === 'review' && (
+            <div className="review" role="status">
+              <p className="eyebrow light">Application under review</p>
+              <ul>{REVIEW.slice(0, step + 1).map((t, i) => <li key={t} className={i === step ? 'now' : 'done'}>{i < step ? '✓' : '…'} {t}</li>)}</ul>
+            </div>
+          )}
+          {stage === 'accepted' && app && (
             <div className="lot" role="status">
-              <p className="lot-top"><span>LOT #{lot.n}</span><span>sell.yoursellf marketplace</span></p>
-              <h2 className="lot-name">{cap(lot.name)}</h2>
-              <p className="lot-desc">1 human · gently used · {device?.device?.toLowerCase()} included</p>
+              <p className="lot-top"><span>Application #{app.n}</span><span>sell.yoursellf</span></p>
+              <h2 className="lot-name">{cap(app.name)}</h2>
+              <p className="lot-desc">{prem ? 'is officially off the market.' : 'is officially on the market.'}</p>
               <dl className="lot-dl">
-                <div><dt>Your cut</dt><dd>${lot.monthly.toFixed(2)}/mo</dd></div>
-                <div><dt>Time to sell out</dt><dd>{lot.secs || 1}s</dd></div>
-                <div><dt>Status</dt><dd className="red">For sale</dd></div>
+                <div><dt>Plan</dt><dd>{prem ? `$${PREMIUM_PRICE}/mo` : `$${PRICE}/mo`}</dd></div>
+                <div><dt>Low/High risk</dt><dd>{prem ? 'Nobody' : `${100 - high}/${high}`}</dd></div>
+                <div><dt>Next payment</dt><dd className="red">Today</dd></div>
               </dl>
-              <span className="stamp" aria-hidden="true">SOLD</span>
-              <p className="lot-foot">Congrats. You're officially a product. Look up at the screen, you might be on it.</p>
+              <span className="stamp" aria-hidden="true">ACCEPTED</span>
+              <p className="lot-foot">{prem ? 'No company gets your data. You pay us to be left alone.' : 'Keep paying to stay listed. Miss a payment and you start over.'}</p>
+              <div className="lot-btns">
+                <button className="btn btn-red btn-sm" onClick={() => { setToast('Payment received (not really). See you in 30 days.'); setTimeout(() => setToast(''), 2400); }}>Keep paying</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => setStage('lapsed')}>Stop paying</button>
+              </div>
+              {toast && <p className="toast">{toast}</p>}
+            </div>
+          )}
+          {stage === 'lapsed' && (
+            <div className="lot lapsed" role="status">
+              <p className="lot-top"><span>Payment missed</span><span>sell.yoursellf</span></p>
+              <h2 className="lot-name">Delisted.</h2>
+              <p className="lot-desc">Your spot is gone. Companies still have your data. You just don't get paid for it anymore.</p>
+              <button className="btn btn-red" onClick={() => setStage('form')}>Reapply →</button>
             </div>
           )}
         </Reveal>
@@ -300,10 +365,8 @@ function Join({ perms, exclusive }) {
           <p className="dos-h"><span className="rec"><i />Already collected</span><small>while you were reading</small></p>
           <ul>
             {facts.map(([k, v], i) => (
-              <li key={k} style={{ '--i': i }}>
-                <span>{k}</span>
-                <DecryptedText text={v} animateOn="view" sequential speed={35} revealDirection="start" className="dv" encryptedClassName="dv enc" />
-              </li>
+              <li key={k} style={{ '--i': i }}><span>{k}</span>
+                <DecryptedText text={v} animateOn="view" sequential speed={35} revealDirection="start" className="dv" encryptedClassName="dv enc" /></li>
             ))}
           </ul>
           <p className="dos-foot">Every website can see this. We're just the first to show you.</p>
@@ -317,26 +380,27 @@ function Footer() {
   return (
     <footer className="foot">
       <p className="foot-big"><Wordmark /></p>
-      <p className="foot-acc">you were already the product. now you're the shareholder.</p>
-      <p className="foot-fine">*Not forever. Not real. sell.yoursellf is a parody startup made in 30 minutes for a pitch competition. We don't take health or financial information. We don't take anything, actually.</p>
+      <p className="foot-acc">California gave you a Delete button. We give you a Sell button.</p>
+      <p className="foot-fine">sell.yoursellf is a parody startup made for a pitch competition. Nobody is charged and nothing is sold. We don't take health or financial information. We don't take anything, actually.</p>
     </footer>
   );
 }
 
 export default function Site() {
-  const [perms, setPerms] = useState({ browser: true, phone: true, devices: false });
-  const [exclusive, setExclusive] = useState(false);
-  useMemo(() => { document.title = 'sell.yoursellf — sell yourself, literally'; }, []);
+  const [high, setHigh] = useState(30);
+  useEffect(() => { document.title = 'sell.yoursellf — sell yourself, literally'; }, []);
   return (
     <ClickSpark fixed sparkColor="#e4002b" sparkSize={11} sparkRadius={20} sparkCount={9} duration={480}>
       <div className="site">
         <Nav />
         <Hero />
+        <Drop />
         <Live />
         <How />
-        <Split />
-        <Earn perms={perms} setPerms={setPerms} exclusive={exclusive} setExclusive={setExclusive} />
-        <Join perms={perms} exclusive={exclusive} />
+        <Breakdown />
+        <Portfolio high={high} setHigh={setHigh} />
+        <Pricing />
+        <Apply high={high} />
         <Footer />
       </div>
     </ClickSpark>

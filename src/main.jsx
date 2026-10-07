@@ -8,7 +8,9 @@ const PAGES = {
   '/deck': () => import('./deck/Deck.jsx'),
   '/qr': () => import('./QR.jsx'),
 };
-const load = (PAGES[path] || (() => import('./site/Site.jsx')))();
+// The single-file preview build picks its page at build time.
+const forced = import.meta.env.VITE_PAGE === 'deck' ? '/deck' : null;
+const load = (PAGES[forced || path] || (() => import('./site/Site.jsx')))();
 
 const FONTS = ['400 1em Anton', '300 1em "Plus Jakarta Sans"', 'italic 400 1em "Playfair Display"'];
 const fontsReady = Promise.all(FONTS.map((f) => document.fonts?.load(f))).catch(() => {});

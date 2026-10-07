@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:single": "VITE_PAGE=site vite build --mode single && VITE_PAGE=deck vite build --mode single"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
-    "vite": "^6.4.4"
+    "vite": "^6.4.4",
+    "vite-plugin-singlefile": "^2.3.3"
   }
 }
